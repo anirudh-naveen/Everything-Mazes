@@ -4,11 +4,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ValueManager : MonoBehaviour
+public class SliderManager : MonoBehaviour
 {
-    [SerializeField] private Slider slider;
+    [SerializeField] public Slider slider;
     [SerializeField] private TMP_Text textField;
-    [SerializeField] private float initialValue = 100;
 
     private void Reset()
     {
@@ -17,10 +16,9 @@ public class ValueManager : MonoBehaviour
     }    
 
     public void Start() {
-        slider.value = initialValue;
+        slider.value = 100;
         slider.onValueChanged.AddListener(ChangedSliderValue);
     }
-
 
     public void ChangedSliderValue(float value) {
         textField.SetText(value.ToString("F0"));
