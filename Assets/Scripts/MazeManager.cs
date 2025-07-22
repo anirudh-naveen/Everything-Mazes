@@ -10,11 +10,17 @@ public class MazeManager : MonoBehaviour
 
     private Sprite maze;
     private SpriteRenderer sr;
-    
+
+
+
+
     private void Start()
     {
         sr = gameObject.AddComponent<SpriteRenderer>();
     }
+
+
+
 
     public void GenerateMaze()
     {
@@ -25,11 +31,7 @@ public class MazeManager : MonoBehaviour
         var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
 
         // Set colors
-        Color[] colors = new Color[width * height];
-        for (int i = 0; i < colors.Length; i++)
-        {
-            colors[i] = Color.white;
-        }
+        Color[] colors = ColorMaze(width, height);
         tex.SetPixels(colors);
         tex.Apply();
 
@@ -42,11 +44,53 @@ public class MazeManager : MonoBehaviour
 
         sr.sprite = maze;
 
-        // set position of maze
+        // Set position of maze
         Camera cam = Camera.main;
         Vector3 screenPosition = new Vector3(Screen.width / 2f, Screen.height * (2f / 3f), cam.nearClipPlane + 1f);
         Vector3 worldPosition = cam.ScreenToWorldPoint(screenPosition);
         worldPosition.z = 0f;
         transform.position = worldPosition;
+    }
+
+
+
+
+    // Automatically colors in the maze
+    private Color[] ColorMaze(int width, int height)
+    {
+        Color[] colors = new Color [width * height];
+
+        for (int i = 0; i < colors.Length; i++)
+        {
+            colors[i] = Color.white;
+        }
+        return colors;
+    }
+
+
+
+
+    // Main method for the Depth First Search algorithm
+    static List<int> DFS(List<int>[] adjVertices) 
+    {
+        bool[] visited = new bool[adjVertices.Length];
+        List<int> coordinates = new List<int>();
+        DFSLoop(adjVertices, visited, 0, coordinates);
+        return coordinates;
+    }
+
+
+
+
+    // Recursive DFS traversal
+    private void DFSLoop(List<int>[] adjVertices, bool[] visited. int pixel, List<int> coordinates) {
+        visited[pixel] = true;
+        res.Add(pixel);
+
+        forearch(int adjVertex in adj[pixel]) {
+            if (!visited[pixel]) {
+                DFSLoop(adjVertices, visited, adjVertex, coordinates)
+            }
+        }
     }
 }
