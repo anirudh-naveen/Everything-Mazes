@@ -71,7 +71,7 @@ public class MazeManager : MonoBehaviour
 
 
     // Main method for the Depth First Search algorithm
-    static List<int> DFS(List<int>[] adjVertices) 
+    private List<int> DFS(List<int>[] adjVertices) 
     {
         bool[] visited = new bool[adjVertices.Length];
         List<int> coordinates = new List<int>();
@@ -83,13 +83,15 @@ public class MazeManager : MonoBehaviour
 
 
     // Recursive DFS traversal
-    private void DFSLoop(List<int>[] adjVertices, bool[] visited. int pixel, List<int> coordinates) {
+    private void DFSLoop(List<int>[] adjVertices, bool[] visited, int pixel, List<int> coordinates) {
         visited[pixel] = true;
-        res.Add(pixel);
+        coordinates.Add(pixel);
 
-        forearch(int adjVertex in adj[pixel]) {
-            if (!visited[pixel]) {
-                DFSLoop(adjVertices, visited, adjVertex, coordinates)
+        foreach(int adjVertex in adjVertices[pixel])
+        {
+            if (!visited[pixel])
+            {
+                DFSLoop(adjVertices, visited, adjVertex, coordinates);
             }
         }
     }
