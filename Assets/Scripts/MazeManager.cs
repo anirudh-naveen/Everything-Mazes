@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class MazeManager : MonoBehaviour
 {
+    [Header("Slider Components")]
     public Slider sliderLength;
     public Slider sliderHeight;
 
