@@ -1099,10 +1099,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 522715943}
   m_HandleRect: {fileID: 1937818667}
   m_Direction: 0
-  m_MinValue: 25
-  m_MaxValue: 400
+  m_MinValue: 5
+  m_MaxValue: 75
   m_WholeNumbers: 1
-  m_Value: 100
+  m_Value: 7
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2627,7 +2627,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 100
+  m_text: 10
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8a89fa14b10d46a99122fd4f73fca9a2, type: 2}
   m_sharedMaterial: {fileID: 2140474, guid: 8a89fa14b10d46a99122fd4f73fca9a2, type: 2}
@@ -4170,7 +4170,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 100
+  m_text: 10
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8a89fa14b10d46a99122fd4f73fca9a2, type: 2}
   m_sharedMaterial: {fileID: 2140474, guid: 8a89fa14b10d46a99122fd4f73fca9a2, type: 2}
@@ -4822,10 +4822,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 91077976}
   m_HandleRect: {fileID: 698268698}
   m_Direction: 0
-  m_MinValue: 25
-  m_MaxValue: 150
+  m_MinValue: 5
+  m_MaxValue: 25
   m_WholeNumbers: 1
-  m_Value: 100
+  m_Value: 20
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []

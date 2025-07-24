@@ -16,7 +16,7 @@ public class SliderManager : MonoBehaviour
     }    
 
     public void Start() {
-        slider.value = 100;
+        slider.value = 10;
         slider.onValueChanged.AddListener(ChangedSliderValue);
     }
 

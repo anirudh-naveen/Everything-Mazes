@@ -12,189 +12,196 @@ public class MazeManager : MonoBehaviour
     private Sprite maze;
     private SpriteRenderer sr;
 
-
-
-
     private void Start()
     {
         sr = gameObject.AddComponent<SpriteRenderer>();
     }
 
-
-
-
     public void GenerateMaze()
     {
-        int width = (int)sliderLength.value * 3;
-        int height = (int)sliderHeight.value * 3;
-        var tex = new Texture2D(width, height, TextureFormat.RGB24, false);
-    
-        // Initialize list of adjacent pixels
-        List<int[]>[] adjPixels = new List<int[]>[width * height];
-        for (int i = 0; i < adjPixels.Length; i++)
-        {
-            adjPixels[i] = new List<int[]>();
-        }
+        // Clean up existing maze
+        CleanupMaze();
 
-        // Add adjacent pixels to lists based on pixel index
-        for (int x = 1; x < width - 1; x++) 
-        {
-            for (int y = 1; y < height - 1; y++)
-            {
-                int index = y * width + x;
-                if (x + 1 < width - 1)
-                {
-                    adjPixels[index].Add(new int[] { x + 1, y });
-                }
-                if (x - 1 > 1)
-                {
-                    adjPixels[index].Add(new int[] { x - 1, y });
-                }
-                if (y + 1 < height - 1)
-                {
-                    adjPixels[index].Add(new int[] { x, y + 1 });
-                }
-                if (y - 1 > 1)
-                {
-                    adjPixels[index].Add(new int[] { x, y - 1 });
-                }
-            }
-        }
-
-        // Color maze
-        Color[] colors = ColorMaze(width, height);
-        tex.SetPixels(colors);
-
-        List<int[]> path = DFS(adjPixels, width);
-        foreach (int[] pixel in path)
-        {
-            tex.SetPixel(pixel[0], pixel[1], Color.black, 0);
-        }
-        tex.Apply();
+        // Use odd dimensions to ensure proper wall/path structure
+        int width = (int)sliderLength.value * 2 + 1;
+        int height = (int)sliderHeight.value * 2 + 1;
         
-
-        // Generate maze sprite
-        maze = Sprite.Create(tex,
-            new Rect(0, 0, width, height),  // texture dimensions
-            new Vector2(0.5f, 0.5f),        // pivot at center
-            1f                              // 1 pixel per unit
-        );
-
-        sr.sprite = maze;
-
-        // Set position of maze
-        Camera cam = Camera.main;
-        Vector3 screenPosition = new Vector3(Screen.width / 2f, Screen.height * (2f / 3f), cam.nearClipPlane + 1f);
-        Vector3 worldPosition = cam.ScreenToWorldPoint(screenPosition);
-        worldPosition.z = 0f;
-        transform.position = worldPosition;
-    }
-
-
-
-
-    // Automatically colors in the maze
-    private Color[] ColorMaze(int width, int height)
-    {
-        Color[] colors = new Color [width * height];
-
-        for (int i = 0; i < colors.Length; i++)
+        Texture2D tex = null;
+        Texture2D scaledTex = null;
+        
+        try
         {
-            colors[i] = Color.white;
+            tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+            tex.filterMode = FilterMode.Point;
+
+            // Initialize maze as all walls (white)
+            Color[] colors = new Color[width * height];
+            for (int i = 0; i < colors.Length; i++)
+            {
+                colors[i] = Color.white; // Walls are white
+            }
+            tex.SetPixels(colors);
+
+            // Generate maze using DFS
+            MazeAlgorithm(tex, width, height);
+            
+            tex.Apply();
+            scaledTex = ScaleTexture(tex, 10);
+            
+            // Generate maze sprite
+            maze = Sprite.Create(scaledTex,
+                new Rect(0, 0, scaledTex.width, scaledTex.height),
+                new Vector2(0.5f, 0.5f),
+                1f
+            );
+            sr.sprite = maze;
+
+            // Set position of maze
+            Camera cam = Camera.main;
+            if (cam != null)
+            {
+                Vector3 screenPosition = new Vector3(Screen.width / 2f, Screen.height * (2f / 3f), cam.nearClipPlane + 1f);
+                Vector3 worldPosition = cam.ScreenToWorldPoint(screenPosition);
+                worldPosition.z = 0f;
+                transform.position = worldPosition;
+            }
         }
-        return colors;
-    }
-
-
-
-
-    // Main method for the Depth First Search algorithm
-    private List<int[]> DFS(List<int[]>[] adjPixels, int width)
-    {
-        bool[] visited = new bool[adjPixels.Length];
-        List<int[]> path = new List<int[]>();
-        int[] firstPixel = new int[] { 1, 1 };
-
-        DFSLoop(adjPixels, visited, firstPixel, path, width);
-        return path;
-    }
-
-
-
-
-    // Recursive DFS traversal
-    private void DFSLoop(List<int[]>[] adjPixels, bool[] visited, int[] pixel, List<int[]> path, int width)
-    {
-        int index = pixel[1] * width + pixel[0];
-        visited[index] = true;
-        path.Add(pixel);
-
-        // Shuffle adjacent pixels
-        List<int[]> adjShuffled = new List<int[]>(adjPixels[index]);
-        for (int i = 0; i < adjShuffled.Count; i++)
+        finally
         {
-            int randomIndex = Random.Range(i, adjShuffled.Count);
-            int[] temp = adjShuffled[i];
-            adjShuffled[i] = adjShuffled[randomIndex];
-            adjShuffled[randomIndex] = temp;
+            if (tex != null)
+            {
+                DestroyImmediate(tex);
+            }
         }
+    }
 
-        foreach (int[] adjPixel in adjShuffled)
+
+    // Uses an iterative depth first search algorithm to create a maze
+    private void MazeAlgorithm(Texture2D tex, int width, int height)
+    {
+        bool[,] visited = new bool[width, height];
+        Stack<Vector2Int> stack = new Stack<Vector2Int>();
+
+        // Start at (1,1)
+        Vector2Int start = new Vector2Int(1, 1);
+        stack.Push(start);
+
+        // Mark starting cell as path
+        tex.SetPixel(start.x, start.y, Color.green);
+        visited[start.x, start.y] = true;
+
+        while (stack.Count > 0)
         {
-            int adjIndex = adjPixel[1] * width + adjPixel[0];
+            Vector2Int current = stack.Peek();
+            Vector2Int next = GetRandomUnvisitedNeighbor(current, visited, width, height);
 
-            if (adjIndex < 0 || adjIndex >= visited.Length)
-                continue;
-
-            if (visited[adjIndex])
-                continue;
-
-            Debug.Log(adjIndex);
-
-            // Do not bypass walls
-            int direction = index - adjIndex;
-            Debug.Log(direction);
-
-            if (adjIndex - width < 0 || adjIndex + width >= visited.Length)
+            if (next != Vector2Int.zero) // Found unvisited neighbor
             {
-                continue;
-            }
+                // Remove wall between current and next
+                Vector2Int wall = current + (next - current) / 2;
+                tex.SetPixel(wall.x, wall.y, Color.black);
+                tex.SetPixel(next.x, next.y, Color.black);
 
-            if (direction == 1)
-            {
-                if (visited[adjIndex - 1])
-                {
-                    Debug.Log("1");
-                    continue;
-                }
-            }
-            else if (direction == -1)
-            {
-                if (visited[adjIndex + 1])
-                {
-                    Debug.Log("2");
-                    continue;
-                }
-            }
-            else if (direction == width)
-            {
-                if (visited[adjIndex - width])
-                {
-                    Debug.Log("3");
-                    continue;
-                }
+                visited[next.x, next.y] = true;
+                stack.Push(next);
             }
             else
             {
-                if (visited[adjIndex + width])
+                stack.Pop(); // Backtrack
+            }
+        }
+    }
+
+
+    // Provides randomized neighbors that aren't on the path
+    private Vector2Int GetRandomUnvisitedNeighbor(Vector2Int cell, bool[,] visited, int width, int height)
+    {
+        List<Vector2Int> neighbors = new List<Vector2Int>();
+
+        // Check all four directions
+        Vector2Int[] directions = {
+            new Vector2Int(0, 2),  // Up
+            new Vector2Int(2, 0),  // Right
+            new Vector2Int(0, -2), // Down
+            new Vector2Int(-2, 0)  // Left
+        };
+
+        foreach (Vector2Int dir in directions)
+        {
+            Vector2Int neighbor = cell + dir;
+
+            // Check if neighbor is within bounds and unvisited
+            if (neighbor.x > 0 && neighbor.x < width - 1 &&
+                neighbor.y > 0 && neighbor.y < height - 1 &&
+                !visited[neighbor.x, neighbor.y])
+            {
+                neighbors.Add(neighbor);
+            }
+        }
+
+        if (neighbors.Count > 0)
+        {
+            return neighbors[Random.Range(0, neighbors.Count)];
+        }
+
+        return Vector2Int.zero; // No unvisited neighbors
+    }
+
+
+
+    // Clean up existing maze resources
+    private void CleanupMaze()
+    {
+        if (maze != null)
+        {
+            if (maze.texture != null)
+            {
+                DestroyImmediate(maze.texture);
+            }
+            DestroyImmediate(maze);
+            maze = null;
+        }
+    }
+
+
+
+    // Scales up the texture
+    public Texture2D ScaleTexture(Texture2D tex, int scaleFactor)
+    {
+        int newWidth = tex.width * scaleFactor;
+        int newHeight = tex.height * scaleFactor;
+
+        Texture2D scaledTexture = new Texture2D(newWidth, newHeight, TextureFormat.RGB24, false);
+        scaledTexture.filterMode = FilterMode.Point;
+
+        Color[] texPixels = tex.GetPixels();
+        Color[] scaledPixels = new Color[newWidth * newHeight];
+
+        for (int y = 0; y < newHeight; y++)
+        {
+            for (int x = 0; x < newWidth; x++)
+            {
+                int texX = x / scaleFactor;
+                int texY = y / scaleFactor;
+                int texIndex = texY * tex.width + texX;
+                int scaledIndex = y * newWidth + x;
+
+                if (texIndex < texPixels.Length && scaledIndex < scaledPixels.Length)
                 {
-                    Debug.Log("4");
-                    continue;
+                    scaledPixels[scaledIndex] = texPixels[texIndex];
                 }
             }
-
-            Debug.Log("Made it!");
-            DFSLoop(adjPixels, visited, adjPixel, path, width);
         }
+
+        scaledTexture.SetPixels(scaledPixels);
+        scaledTexture.Apply();
+        return scaledTexture;
+    }
+
+
+
+    private void OnDestroy()
+    {
+        CleanupMaze();
     }
 }
