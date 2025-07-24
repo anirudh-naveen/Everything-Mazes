@@ -22,7 +22,7 @@ public class MazeManager : MonoBehaviour
         // Clean up existing maze
         CleanupMaze();
 
-        // Use odd dimensions to ensure proper wall/path structure
+        // Odd dimensions
         int width = (int)sliderLength.value * 2 + 1;
         int height = (int)sliderHeight.value * 2 + 1;
         
@@ -42,7 +42,7 @@ public class MazeManager : MonoBehaviour
             }
             tex.SetPixels(colors);
 
-            // Generate maze using DFS
+            // Generate maze
             MazeAlgorithm(tex, width, height);
             
             tex.Apply();
@@ -66,6 +66,7 @@ public class MazeManager : MonoBehaviour
                 transform.position = worldPosition;
             }
         }
+
         finally
         {
             if (tex != null)
@@ -76,19 +77,13 @@ public class MazeManager : MonoBehaviour
     }
 
 
-    // Uses an iterative depth first search algorithm to create a maze
+    // Uses an iterative stack algorithm to create a maze
     private void MazeAlgorithm(Texture2D tex, int width, int height)
     {
         bool[,] visited = new bool[width, height];
         Stack<Vector2Int> stack = new Stack<Vector2Int>();
 
-        // Start at (1,1)
-        Vector2Int start = new Vector2Int(1, 1);
-        stack.Push(start);
-
-        // Mark starting cell as path
-        tex.SetPixel(start.x, start.y, Color.green);
-        visited[start.x, start.y] = true;
+        GenStartPixel(visited, stack, tex, width, height);
 
         while (stack.Count > 0)
         {
@@ -107,18 +102,118 @@ public class MazeManager : MonoBehaviour
             }
             else
             {
-                stack.Pop(); // Backtrack
+                stack.Pop(); // Backtrack through stack
+            }
+        }
+
+        GenEndPixel(visited, stack, tex, width, height);
+    }
+
+
+    // Generates starting position of the maze
+    private void GenStartPixel(bool[,] visited, Stack<Vector2Int> stack, Texture2D tex, int width, int height)
+    {
+        Vector2Int start = new Vector2Int(0, 0);
+        switch (Random.Range(1, 4))
+        {
+            case 1:
+                start = new Vector2Int(0, Random.Range(1, height - 1));
+                break;
+            case 2:
+                start = new Vector2Int(width - 1, Random.Range(1, height - 1));
+                break;
+            case 3:
+                start = new Vector2Int(Random.Range(1, width - 1), 0);
+                break;
+            case 4:
+                start = new Vector2Int(Random.Range(1, width - 1), height - 1);
+                break;
+        }
+        stack.Push(start);
+
+        tex.SetPixel(start.x, start.y, Color.green);
+        visited[start.x, start.y] = true;
+    }
+
+
+    // Generates ending position of the maze
+    private void GenEndPixel(bool[,] visited, Stack<Vector2Int> stack, Texture2D tex, int width, int height)
+    {
+        int maxAttempts = 1000; // Prevent infinite loops
+        int attempts = 0;
+        
+        while (attempts < maxAttempts)
+        {
+            attempts++;
+            
+            Vector2Int end = new Vector2Int(0, 0);
+            switch (Random.Range(1, 5))
+            {
+                case 1:
+                    end = new Vector2Int(0, Random.Range(1, height - 1));
+                    break;
+                case 2:
+                    end = new Vector2Int(width - 1, Random.Range(1, height - 1));
+                    break;
+                case 3:
+                    end = new Vector2Int(Random.Range(1, width - 1), 0);
+                    break;
+                case 4:
+                    end = new Vector2Int(Random.Range(1, width - 1), height - 1);
+                    break;
+            }
+
+            // Check if this position is valid (unvisited and has adjacent path)
+            if (!visited[end.x, end.y] && PathNearPixel(end, visited, width, height))
+            {
+                stack.Push(end);
+                tex.SetPixel(end.x, end.y, Color.red);
+                visited[end.x, end.y] = true;
+                return; // Success - exit the method
+            }
+        }
+        
+        // FALLBACK: Place end at any unvisited position with adjacent path
+        for (int x = 1; x < width - 1; x++)
+        {
+            for (int y = 1; y < height - 1; y++)
+            {
+                Vector2Int end = new Vector2Int(x, y);
+                if (!visited[x, y] && PathNearPixel(end, visited, width, height))
+                {
+                    stack.Push(end);
+                    tex.SetPixel(x, y, Color.red);
+                    visited[x, y] = true;
+                    return;
+                }
+            }
+        }
+        
+        // FALLBACK: Place end at any unvisited position
+        for (int x = 1; x < width - 1; x++)
+        {
+            for (int y = 1; y < height - 1; y++)
+            {
+                if (!visited[x, y])
+                {
+                    Vector2Int end = new Vector2Int(x, y);
+                    stack.Push(end);
+                    tex.SetPixel(x, y, Color.red);
+                    visited[x, y] = true;
+                    return;
+                }
             }
         }
     }
 
 
+
     // Provides randomized neighbors that aren't on the path
-    private Vector2Int GetRandomUnvisitedNeighbor(Vector2Int cell, bool[,] visited, int width, int height)
+    private Vector2Int GetRandomUnvisitedNeighbor(Vector2Int pixel, bool[,] visited, int width, int height)
     {
         List<Vector2Int> neighbors = new List<Vector2Int>();
 
-        // Check all four directions
+        // Check all four directions for walls
         Vector2Int[] directions = {
             new Vector2Int(0, 2),  // Up
             new Vector2Int(2, 0),  // Right
@@ -126,9 +221,9 @@ public class MazeManager : MonoBehaviour
             new Vector2Int(-2, 0)  // Left
         };
 
-        foreach (Vector2Int dir in directions)
+        foreach (Vector2Int direction in directions)
         {
-            Vector2Int neighbor = cell + dir;
+            Vector2Int neighbor = pixel + direction;
 
             // Check if neighbor is within bounds and unvisited
             if (neighbor.x > 0 && neighbor.x < width - 1 &&
@@ -144,9 +239,39 @@ public class MazeManager : MonoBehaviour
             return neighbors[Random.Range(0, neighbors.Count)];
         }
 
-        return Vector2Int.zero; // No unvisited neighbors
+        return Vector2Int.zero; // Return no unvisited neighbors found
     }
+    
 
+
+    // Checks if there is no path connecting to a pixel
+    private bool PathNearPixel(Vector2Int pixel, bool[,] visited, int width, int height)
+    {
+        List<Vector2Int> neighbors = new List<Vector2Int>();
+
+        // Check all four directions for paths
+        Vector2Int[] directions = {
+            new Vector2Int(0, 1),  // Up
+            new Vector2Int(1, 0),  // Right
+            new Vector2Int(0, -1), // Down
+            new Vector2Int(-1, 0)  // Left
+        };
+
+        foreach (Vector2Int direction in directions)
+        {
+            Vector2Int neighbor = pixel + direction;
+
+            // Check if neighbor is within bounds and unvisited
+            if (neighbor.x > 0 && neighbor.x < width - 1 &&
+                neighbor.y > 0 && neighbor.y < height - 1 &&
+                visited[neighbor.x, neighbor.y])
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 
     // Clean up existing maze resources
