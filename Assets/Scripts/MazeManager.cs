@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,8 +10,15 @@ public class MazeManager : MonoBehaviour
     public Slider sliderLength;
     public Slider sliderHeight;
 
+    [Header("Dropdown Components")]
+    public TMP_Dropdown ddMaze;
+    public TMP_Dropdown ddPath;
+
     private Sprite maze;
     private SpriteRenderer sr;
+
+    private Color32 mazeColor;
+    private Color32 pathColor;
 
     private void Start()
     {
@@ -21,6 +29,57 @@ public class MazeManager : MonoBehaviour
     {
         // Clean up existing maze
         CleanupMaze();
+
+        // Get color choices
+        switch (ddMaze.value)
+        {
+            case 0:
+                mazeColor = new Color32(0, 0, 0, 255);      // black
+                break;
+            case 1:
+                mazeColor = new Color32(255, 0, 0, 255);    // red
+                break;
+            case 2:
+                mazeColor = new Color32(0, 255, 0, 255);    // green
+                break;
+            case 3:
+                mazeColor = new Color32(0, 0, 255, 255);    // blue
+                break;
+            case 4:
+                mazeColor = new Color32(255, 255, 0, 255);  // yellow
+                break;
+            case 5:
+                mazeColor = new Color32(255, 0, 255, 255);  // magenta
+                break;
+            case 6: 
+                mazeColor = new Color32(0, 255, 255, 255);  // cyan
+                break;
+        }
+
+        switch (ddPath.value)
+        {
+            case 0:
+                pathColor = new Color32(255, 255, 255, 255);    // white
+                break;
+            case 1:
+                pathColor = new Color32(255, 200, 200, 255);    // red
+                break;  
+            case 2:
+                pathColor = new Color32(200, 255, 200, 255);    // green
+                break;
+            case 3:
+                pathColor = new Color32(200, 200, 255, 255);    // blue
+                break;
+            case 4:
+                pathColor = new Color32(255, 255, 200, 255);    // yellow
+                break;
+            case 5:
+                pathColor = new Color32(255, 200, 255, 255);    // magenta
+                break;
+            case 6:
+                pathColor = new Color32 (200, 255, 255, 255);   // cyan
+                break;
+        }
 
         // Odd dimensions
         int width = (int)sliderLength.value * 2 + 1;
@@ -34,13 +93,13 @@ public class MazeManager : MonoBehaviour
             tex = new Texture2D(width, height, TextureFormat.RGB24, false);
             tex.filterMode = FilterMode.Point;
 
-            // Initialize maze as all walls (white)
-            Color[] colors = new Color[width * height];
+            // Initialize maze as all walls
+            Color32[] colors = new Color32[width * height];
             for (int i = 0; i < colors.Length; i++)
             {
-                colors[i] = Color.white; // Walls are white
+                colors[i] = mazeColor;
             }
-            tex.SetPixels(colors);
+            tex.SetPixels32(colors);
 
             // Generate maze
             MazeAlgorithm(tex, width, height);
@@ -94,8 +153,8 @@ public class MazeManager : MonoBehaviour
             {
                 // Remove wall between current and next
                 Vector2Int wall = current + (next - current) / 2;
-                tex.SetPixel(wall.x, wall.y, Color.black);
-                tex.SetPixel(next.x, next.y, Color.black);
+                tex.SetPixel(wall.x, wall.y, pathColor);
+                tex.SetPixel(next.x, next.y, pathColor);
 
                 visited[next.x, next.y] = true;
                 stack.Push(next);
@@ -108,6 +167,7 @@ public class MazeManager : MonoBehaviour
 
         GenEndPixel(visited, stack, tex, width, height);
     }
+
 
 
     // Generates starting position of the maze
@@ -131,7 +191,7 @@ public class MazeManager : MonoBehaviour
         }
         stack.Push(start);
 
-        tex.SetPixel(start.x, start.y, Color.green);
+        tex.SetPixel(start.x, start.y, new Color32(0, 255, 0, 50));
         visited[start.x, start.y] = true;
     }
 
@@ -167,7 +227,7 @@ public class MazeManager : MonoBehaviour
             if (!visited[end.x, end.y] && PathNearPixel(end, visited, width, height))
             {
                 stack.Push(end);
-                tex.SetPixel(end.x, end.y, Color.red);
+                tex.SetPixel(end.x, end.y, new Color32(255, 0, 0, 50));
                 visited[end.x, end.y] = true;
                 return; // Success - exit the method
             }
@@ -182,7 +242,7 @@ public class MazeManager : MonoBehaviour
                 if (!visited[x, y] && PathNearPixel(end, visited, width, height))
                 {
                     stack.Push(end);
-                    tex.SetPixel(x, y, Color.red);
+                    tex.SetPixel(x, y, new Color32(255, 0, 0, 50));
                     visited[x, y] = true;
                     return;
                 }
@@ -198,7 +258,7 @@ public class MazeManager : MonoBehaviour
                 {
                     Vector2Int end = new Vector2Int(x, y);
                     stack.Push(end);
-                    tex.SetPixel(x, y, Color.red);
+                    tex.SetPixel(x, y, new Color32(255, 0, 0, 50));
                     visited[x, y] = true;
                     return;
                 }

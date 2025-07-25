@@ -51,6 +51,12 @@ public class DropdownManager : MonoBehaviour
             case 4:
                 ddPathLabel.color = Color.yellow;
                 break;
+            case 5:
+                ddPathLabel.color = Color.magenta;
+                break;
+            case 6:
+                ddPathLabel.color = Color.cyan;
+                break;
         }
     }
 
@@ -73,6 +79,12 @@ public class DropdownManager : MonoBehaviour
                 break;
             case 4:
                 ddMazeLabel.color = Color.yellow;
+                break;
+            case 5:
+                ddMazeLabel.color = Color.magenta;
+                break;
+            case 6:
+                ddMazeLabel.color = Color.cyan;
                 break;
         }
     }
