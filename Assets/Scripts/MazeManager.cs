@@ -19,6 +19,8 @@ public class MazeManager : MonoBehaviour
 
     private Color32 mazeColor;
     private Color32 pathColor;
+    private Color32 startColor;
+    private Color32 endColor;
 
     private void Start()
     {
@@ -35,24 +37,38 @@ public class MazeManager : MonoBehaviour
         {
             case 0:
                 mazeColor = new Color32(0, 0, 0, 255);      // black
+                startColor = new Color32(0, 255, 0, 255);
+                endColor = new Color32(255, 0, 0, 255);
                 break;
             case 1:
                 mazeColor = new Color32(255, 0, 0, 255);    // red
+                startColor = new Color32(85, 255, 0, 255);
+                endColor = new Color32(255, 0, 128, 255);
                 break;
             case 2:
                 mazeColor = new Color32(0, 255, 0, 255);    // green
+                startColor = new Color32(255, 85, 0, 255); 
+                endColor = new Color32(255, 0, 128, 255);
                 break;
             case 3:
                 mazeColor = new Color32(0, 0, 255, 255);    // blue
+                startColor = new Color32(255, 255, 0, 255);
+                endColor = new Color32(255, 85, 0, 255);
                 break;
             case 4:
                 mazeColor = new Color32(255, 255, 0, 255);  // yellow
+                startColor = new Color32(0, 0, 255, 255);
+                endColor = new Color32(255, 0, 255, 255);
                 break;
             case 5:
                 mazeColor = new Color32(255, 0, 255, 255);  // magenta
+                startColor = new Color32(85, 255, 0, 255);
+                endColor = new Color32(255, 255, 0, 255);
                 break;
             case 6: 
                 mazeColor = new Color32(0, 255, 255, 255);  // cyan
+                startColor = new Color32(255, 170, 0, 255);
+                endColor = new Color32(255, 0, 0, 255);
                 break;
         }
 
@@ -191,7 +207,7 @@ public class MazeManager : MonoBehaviour
         }
         stack.Push(start);
 
-        tex.SetPixel(start.x, start.y, new Color32(0, 255, 0, 50));
+        tex.SetPixel(start.x, start.y, startColor);
         visited[start.x, start.y] = true;
     }
 
@@ -227,7 +243,7 @@ public class MazeManager : MonoBehaviour
             if (!visited[end.x, end.y] && PathNearPixel(end, visited, width, height))
             {
                 stack.Push(end);
-                tex.SetPixel(end.x, end.y, new Color32(255, 0, 0, 50));
+                tex.SetPixel(end.x, end.y, endColor);
                 visited[end.x, end.y] = true;
                 return; // Success - exit the method
             }
@@ -258,7 +274,7 @@ public class MazeManager : MonoBehaviour
                 {
                     Vector2Int end = new Vector2Int(x, y);
                     stack.Push(end);
-                    tex.SetPixel(x, y, new Color32(255, 0, 0, 50));
+                    tex.SetPixel(x, y, endColor);
                     visited[x, y] = true;
                     return;
                 }
