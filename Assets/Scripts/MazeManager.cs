@@ -9,12 +9,14 @@ public class MazeManager : MonoBehaviour
     [Header("Slider Components")]
     public Slider sliderLength;
     public Slider sliderHeight;
+    public Slider sliderScale;
 
     [Header("Dropdown Components")]
     public TMP_Dropdown ddMaze;
     public TMP_Dropdown ddPath;
 
-    private Sprite maze;
+    private MazeScriptableObject maze;
+    private Sprite mazeSprite;
     private SpriteRenderer sr;
 
     private Color32 mazeColor;
@@ -32,6 +34,10 @@ public class MazeManager : MonoBehaviour
         // Clean up existing maze
         CleanupMaze();
 
+        // Create new maze instance
+        this.maze = ScriptableObject.CreateInstance<MazeScriptableObject>();
+        this.maze = maze;
+
         // Get color choices
         switch (ddMaze.value)
         {
@@ -47,7 +53,7 @@ public class MazeManager : MonoBehaviour
                 break;
             case 2:
                 mazeColor = new Color32(0, 255, 0, 255);    // green
-                startColor = new Color32(255, 85, 0, 255); 
+                startColor = new Color32(255, 85, 0, 255);
                 endColor = new Color32(255, 0, 128, 255);
                 break;
             case 3:
@@ -65,7 +71,7 @@ public class MazeManager : MonoBehaviour
                 startColor = new Color32(85, 255, 0, 255);
                 endColor = new Color32(255, 255, 0, 255);
                 break;
-            case 6: 
+            case 6:
                 mazeColor = new Color32(0, 255, 255, 255);  // cyan
                 startColor = new Color32(255, 170, 0, 255);
                 endColor = new Color32(255, 0, 0, 255);
@@ -97,10 +103,12 @@ public class MazeManager : MonoBehaviour
                 break;
         }
 
-        // Odd dimensions
+        // Retrieve slider values
         int width = (int)sliderLength.value * 2 + 1;
         int height = (int)sliderHeight.value * 2 + 1;
+        int scale = (int)sliderScale.value;
         
+        // Initialize textures
         Texture2D tex = null;
         Texture2D scaledTex = null;
         
@@ -119,17 +127,21 @@ public class MazeManager : MonoBehaviour
 
             // Generate maze
             MazeAlgorithm(tex, width, height);
-            
+
             tex.Apply();
-            scaledTex = ScaleTexture(tex, 10);
-            
+            scaledTex = ScaleTexture(tex, scale);
+
+            // Update the ScriptableObject with the completed texture
+            this.maze.UpdateTitle(System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            this.maze.UpdateMazeTex(scaledTex);
+
             // Generate maze sprite
-            maze = Sprite.Create(scaledTex,
+            mazeSprite = Sprite.Create(scaledTex,
                 new Rect(0, 0, scaledTex.width, scaledTex.height),
                 new Vector2(0.5f, 0.5f),
                 1f
             );
-            sr.sprite = maze;
+            sr.sprite = mazeSprite;
 
             // Set position of maze
             Camera cam = Camera.main;
@@ -239,17 +251,17 @@ public class MazeManager : MonoBehaviour
                     break;
             }
 
-            // Check if this position is valid (unvisited and has adjacent path)
+            // Check if this position is valid
             if (!visited[end.x, end.y] && PathNearPixel(end, visited, width, height))
             {
                 stack.Push(end);
                 tex.SetPixel(end.x, end.y, endColor);
                 visited[end.x, end.y] = true;
-                return; // Success - exit the method
+                return;
             }
         }
         
-        // FALLBACK: Place end at any unvisited position with adjacent path
+        // FALLBACK 1: Place end at any unvisited position with adjacent path
         for (int x = 1; x < width - 1; x++)
         {
             for (int y = 1; y < height - 1; y++)
@@ -265,7 +277,7 @@ public class MazeManager : MonoBehaviour
             }
         }
         
-        // FALLBACK: Place end at any unvisited position
+        // FALLBACK 2: Place end at any unvisited position
         for (int x = 1; x < width - 1; x++)
         {
             for (int y = 1; y < height - 1; y++)
@@ -350,21 +362,6 @@ public class MazeManager : MonoBehaviour
     }
 
 
-    // Clean up existing maze resources
-    private void CleanupMaze()
-    {
-        if (maze != null)
-        {
-            if (maze.texture != null)
-            {
-                DestroyImmediate(maze.texture);
-            }
-            DestroyImmediate(maze);
-            maze = null;
-        }
-    }
-
-
 
     // Scales up the texture
     public Texture2D ScaleTexture(Texture2D tex, int scaleFactor)
@@ -397,6 +394,28 @@ public class MazeManager : MonoBehaviour
         scaledTexture.SetPixels(scaledPixels);
         scaledTexture.Apply();
         return scaledTexture;
+    }
+
+
+
+    // Clean up existing maze resources
+    private void CleanupMaze()
+    {
+        if (mazeSprite != null)
+        {
+            if (mazeSprite.texture != null)
+            {
+                DestroyImmediate(mazeSprite.texture);
+            }
+            DestroyImmediate(mazeSprite);
+            mazeSprite = null;
+        }
+
+        if (maze != null)
+        {
+            DestroyImmediate(maze);
+            maze = null;
+        }
     }
 
 
