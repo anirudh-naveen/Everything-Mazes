@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MazeManager : MonoBehaviour
+public class MazeManager : MonoBehaviour, IDataPersistence
 {
     [Header("Slider Components")]
     public Slider sliderLength;
@@ -15,7 +15,7 @@ public class MazeManager : MonoBehaviour
     public TMP_Dropdown ddMaze;
     public TMP_Dropdown ddPath;
 
-    private MazeScriptableObject maze;
+    private Maze maze;
     private Sprite mazeSprite;
     private SpriteRenderer sr;
 
@@ -23,6 +23,10 @@ public class MazeManager : MonoBehaviour
     private Color32 pathColor;
     private Color32 startColor;
     private Color32 endColor;
+
+    private int width;
+    private int height;
+    private int scale;
 
     private void Start()
     {
@@ -33,9 +37,6 @@ public class MazeManager : MonoBehaviour
     {
         // Clean up existing maze
         CleanupMaze();
-
-        // Create new maze instance
-        maze = ScriptableObject.CreateInstance<MazeScriptableObject>();
 
         // Get color choices
         switch (ddMaze.value)
@@ -130,9 +131,8 @@ public class MazeManager : MonoBehaviour
             tex.Apply();
             scaledTex = ScaleTexture(tex, scale);
 
-            // Update the ScriptableObject with the completed texture
-            this.maze.UpdateTitle(System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            this.maze.UpdateMazeTex(scaledTex);
+            // Update the maze with the completed texture
+            maze = new Maze(scaledTex);
 
             // Generate maze sprite
             mazeSprite = Sprite.Create(scaledTex,
@@ -397,6 +397,27 @@ public class MazeManager : MonoBehaviour
 
 
 
+
+    public void LoadData(GameData data)
+    {
+        this.width = data.width;
+        this.height = data.height;
+        this.scale = data.scale;
+        this.maze = data.maze;
+    }
+
+
+
+    public void SaveData(ref GameData data)
+    {
+        data.width = this.width;
+        data.height = this.height;
+        data.scale = this.scale;
+        data.maze = this.maze;
+    }
+
+
+
     // Clean up existing maze resources
     private void CleanupMaze()
     {
@@ -412,7 +433,6 @@ public class MazeManager : MonoBehaviour
 
         if (maze != null)
         {
-            DestroyImmediate(maze);
             maze = null;
         }
     }

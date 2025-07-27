@@ -5,11 +5,16 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-[CreateAssetMenu]
-public class MazeScriptableObject : ScriptableObject
+public class Maze
 {
     public string title;
-    public Texture2D maze;
+    public Texture2D mazeTex;
+
+    public Maze(Texture2D inputTex)
+    {
+        this.title = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        this.mazeTex = inputTex;
+    }
 
     public void UpdateTitle(InputField inputField)
     {
@@ -21,9 +26,8 @@ public class MazeScriptableObject : ScriptableObject
         title = date;
     }
 
-
     public void UpdateMazeTex(Texture2D inputTex)
     {
-        maze = inputTex;
+        mazeTex = inputTex;
     }
 }
