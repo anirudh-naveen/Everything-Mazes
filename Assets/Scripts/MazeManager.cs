@@ -35,8 +35,7 @@ public class MazeManager : MonoBehaviour
         CleanupMaze();
 
         // Create new maze instance
-        this.maze = ScriptableObject.CreateInstance<MazeScriptableObject>();
-        this.maze = maze;
+        maze = ScriptableObject.CreateInstance<MazeScriptableObject>();
 
         // Get color choices
         switch (ddMaze.value)
