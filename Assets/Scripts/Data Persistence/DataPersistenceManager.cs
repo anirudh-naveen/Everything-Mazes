@@ -29,6 +29,7 @@ public class DataPersistenceManager : MonoBehaviour
     {
         this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, useEncryption);
         this.dataPersistenceObjects = FindAllDataPersistenceObjects();
+        NewGame();
     }
 
 
@@ -62,13 +63,21 @@ public class DataPersistenceManager : MonoBehaviour
     // Saves the maze to a JSON save file
     public void SaveGame() 
     {
+        // Initialize gameData if it's null
+        if (this.gameData == null) 
+        {
+            Debug.Log("GameData was null. Initializing new GameData for save.");
+            this.gameData = new GameData();
+        }
+
         // Pass the data to other scripts so they can update it
         foreach (IDataPersistence dataPersistenceObject in dataPersistenceObjects) 
         {
             dataPersistenceObject.SaveData(ref gameData);
         }
+        
+        dataHandler.Save(gameData);
     }
-
 
     private List<IDataPersistence> FindAllDataPersistenceObjects() 
     {

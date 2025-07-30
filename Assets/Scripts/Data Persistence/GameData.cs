@@ -14,8 +14,9 @@ public class GameData
     // Initial values the game will start with
     public GameData()
     {
-        this.width = 10;
-        this.height = 10;
-        this.scale = 10;
+        width = 21;
+        height = 21;
+        scale = 10;
+        maze = null;
     }
 }

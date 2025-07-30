@@ -399,21 +399,65 @@ public class MazeManager : MonoBehaviour, IDataPersistence
 
 
     public void LoadData(GameData data)
+{
+    // Load maze dimensions and scale
+    this.width = data.width;
+    this.height = data.height;
+    this.scale = data.scale;
+    
+    // Update UI sliders to match loaded values
+    if (sliderLength != null)
+        sliderLength.value = (data.width - 1) / 2;
+    if (sliderHeight != null)
+        sliderHeight.value = (data.height - 1) / 2;
+    if (sliderScale != null)
+        sliderScale.value = data.scale;
+    
+    // Load and display the maze if it exists
+    if (data.maze != null)
     {
-        this.width = data.width;
-        this.height = data.height;
-        this.scale = data.scale;
         this.maze = data.maze;
+        
+        // Recreate the sprite from loaded maze data
+        Texture2D loadedTexture = maze.ToTexture();
+        if (loadedTexture != null)
+        {
+            CleanupMaze();
+            
+            mazeSprite = Sprite.Create(loadedTexture,
+                new Rect(0, 0, loadedTexture.width, loadedTexture.height),
+                new Vector2(0.5f, 0.5f),
+                1f
+            );
+            sr.sprite = mazeSprite;
+            
+        }
     }
+    else
+    {
+        Debug.Log("No maze data found to load.");
+    }
+}
+
 
 
 
     public void SaveData(ref GameData data)
     {
-        data.width = this.width;
-        data.height = this.height;
-        data.scale = this.scale;
-        data.maze = this.maze;
+        // Capture current slider values
+        data.width = (int)sliderLength.value * 2 + 1;
+        data.height = (int)sliderHeight.value * 2 + 1;
+        data.scale = (int)sliderScale.value;
+        
+        // Save the maze if it exists
+        if (maze != null)
+        {
+            data.maze = maze;        }
+        else
+        {
+            Debug.Log("No maze was created to save.");
+            data.maze = null;
+        }
     }
 
 
