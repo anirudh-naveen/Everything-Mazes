@@ -31,6 +31,16 @@ public class MazeManager : MonoBehaviour, IDataPersistence
     private void Start()
     {
         sr = gameObject.AddComponent<SpriteRenderer>();
+
+        // Set default position of maze
+            Camera cam = Camera.main;
+            if (cam != null)
+            {
+                Vector3 screenPosition = new Vector3(Screen.width / 2f, Screen.height * (2f / 3f), cam.nearClipPlane + 1f);
+                Vector3 worldPosition = cam.ScreenToWorldPoint(screenPosition);
+                worldPosition.z = 0f;
+                transform.position = worldPosition;
+            }
     }
 
     public void GenerateMaze()
@@ -141,16 +151,6 @@ public class MazeManager : MonoBehaviour, IDataPersistence
                 1f
             );
             sr.sprite = mazeSprite;
-
-            // Set position of maze
-            Camera cam = Camera.main;
-            if (cam != null)
-            {
-                Vector3 screenPosition = new Vector3(Screen.width / 2f, Screen.height * (2f / 3f), cam.nearClipPlane + 1f);
-                Vector3 worldPosition = cam.ScreenToWorldPoint(screenPosition);
-                worldPosition.z = 0f;
-                transform.position = worldPosition;
-            }
         }
 
         finally
@@ -436,6 +436,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
     else
     {
         Debug.Log("No maze data found to load.");
+        CleanupMaze();
     }
 }
 
@@ -463,7 +464,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
 
 
     // Clean up existing maze resources
-    private void CleanupMaze()
+    public void CleanupMaze()
     {
         if (mazeSprite != null)
         {

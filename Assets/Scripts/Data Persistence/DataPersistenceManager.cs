@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using TMPro;
 
 public class DataPersistenceManager : MonoBehaviour
 {
@@ -9,12 +10,14 @@ public class DataPersistenceManager : MonoBehaviour
     [SerializeField] private string fileName;
     [SerializeField] private bool useEncryption;
 
-
     public static DataPersistenceManager instance { get; private set; }
 
     private GameData gameData;
     private List<IDataPersistence> dataPersistenceObjects;
     private FileDataHandler dataHandler;
+
+    public TMP_Dropdown ddSave;
+    private string fullName;
 
     private void Awake() 
     {
@@ -27,17 +30,24 @@ public class DataPersistenceManager : MonoBehaviour
 
     private void Start() 
     {
-        this.dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, useEncryption);
-        this.dataPersistenceObjects = FindAllDataPersistenceObjects();
+        fullName = fileName + ddSave.value;
+        dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, useEncryption);
+        dataPersistenceObjects = FindAllDataPersistenceObjects();
         NewGame();
     }
 
 
      public void NewGame() 
     {
-        this.gameData = new GameData();
+        gameData = new GameData();
     }
 
+
+
+    public void onSaveFileDropdownChanged() {
+        fullName = fileName + ddSave.value;
+        dataHandler = new FileDataHandler(Application.persistentDataPath, fullName, useEncryption);
+    }
 
 
     // Loads the maze from a chosen JSON save file
