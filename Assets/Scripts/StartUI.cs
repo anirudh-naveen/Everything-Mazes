@@ -10,4 +10,13 @@ public class ScenesChanger : MonoBehaviour
         SceneManager.LoadScene("CreationScene");
     }
 
+    public void LoadPlayScene()
+    {
+        SceneManager.LoadScene("PlayScene");
+    }
+
+    public void LoadStartScene()
+    {
+        SceneManager.LoadScene("StartScene");
+    }
 }
