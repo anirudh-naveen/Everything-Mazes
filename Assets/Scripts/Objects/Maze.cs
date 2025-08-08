@@ -12,13 +12,17 @@ public class Maze
     public int width;
     public int height;
     public Color32[] pixels;
+    public Color32 mazeColor;
+    public Color32 pathColor;
 
-    public Maze(Texture2D texture)
+    public Maze(Texture2D texture, Color32 colorOfMaze, Color32 colorOfPath)
     {
         title = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         width = texture.width;
         height = texture.height;
         pixels = texture.GetPixels32();
+        mazeColor = colorOfMaze;
+        pathColor = colorOfPath;
     }
 
     public void UpdateTitle(InputField inputField)

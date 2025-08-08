@@ -49,69 +49,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
         CleanupMaze();
 
         // Get color choices
-        switch (ddMaze.value)
-        {
-            case 0:
-                mazeColor = new Color32(0, 0, 0, 255);      // black
-                startColor = new Color32(0, 255, 0, 255);
-                endColor = new Color32(255, 0, 0, 255);
-                break;
-            case 1:
-                mazeColor = new Color32(255, 0, 0, 255);    // red
-                startColor = new Color32(85, 255, 0, 255);
-                endColor = new Color32(255, 0, 128, 255);
-                break;
-            case 2:
-                mazeColor = new Color32(0, 255, 0, 255);    // green
-                startColor = new Color32(255, 85, 0, 255);
-                endColor = new Color32(255, 0, 128, 255);
-                break;
-            case 3:
-                mazeColor = new Color32(0, 0, 255, 255);    // blue
-                startColor = new Color32(255, 255, 0, 255);
-                endColor = new Color32(255, 85, 0, 255);
-                break;
-            case 4:
-                mazeColor = new Color32(255, 255, 0, 255);  // yellow
-                startColor = new Color32(0, 0, 255, 255);
-                endColor = new Color32(255, 0, 255, 255);
-                break;
-            case 5:
-                mazeColor = new Color32(255, 0, 255, 255);  // magenta
-                startColor = new Color32(85, 255, 0, 255);
-                endColor = new Color32(255, 255, 0, 255);
-                break;
-            case 6:
-                mazeColor = new Color32(0, 255, 255, 255);  // cyan
-                startColor = new Color32(255, 170, 0, 255);
-                endColor = new Color32(255, 0, 0, 255);
-                break;
-        }
-
-        switch (ddPath.value)
-        {
-            case 0:
-                pathColor = new Color32(255, 255, 255, 255);    // white
-                break;
-            case 1:
-                pathColor = new Color32(255, 200, 200, 255);    // red
-                break;  
-            case 2:
-                pathColor = new Color32(200, 255, 200, 255);    // green
-                break;
-            case 3:
-                pathColor = new Color32(200, 200, 255, 255);    // blue
-                break;
-            case 4:
-                pathColor = new Color32(255, 255, 200, 255);    // yellow
-                break;
-            case 5:
-                pathColor = new Color32(255, 200, 255, 255);    // magenta
-                break;
-            case 6:
-                pathColor = new Color32 (200, 255, 255, 255);   // cyan
-                break;
-        }
+        SetColors();
 
         // Retrieve slider values
         int width = (int)sliderLength.value * 2 + 1;
@@ -142,7 +80,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
             scaledTex = ScaleTexture(tex, scale);
 
             // Update the maze with the completed texture
-            maze = new Maze(scaledTex);
+            maze = new Maze(scaledTex, mazeColor, pathColor);
 
             // Generate maze sprite
             mazeSprite = Sprite.Create(scaledTex,
@@ -358,6 +296,62 @@ public class MazeManager : MonoBehaviour, IDataPersistence
         }
 
         return false;
+    }
+
+
+
+
+    // Get color choices
+    private void SetColors() {
+        switch (ddMaze.value)
+        {
+            case 0:
+                mazeColor = new Color32(0, 0, 0, 255);      // black
+                break;
+            case 1:
+                mazeColor = new Color32(255, 0, 0, 255);    // red
+                break;
+            case 2:
+                mazeColor = new Color32(0, 255, 0, 255);    // green
+                break;
+            case 3:
+                mazeColor = new Color32(0, 0, 255, 255);    // blue
+                break;
+            case 4:
+                mazeColor = new Color32(255, 255, 0, 255);  // yellow
+                break;
+            case 5:
+                mazeColor = new Color32(255, 0, 255, 255);  // magenta
+                break;
+            case 6:
+                mazeColor = new Color32(0, 255, 255, 255);  // cyan
+                break;
+        }
+
+        switch (ddPath.value)
+        {
+            case 0:
+                pathColor = new Color32(255, 255, 255, 255);    // white
+                break;
+            case 1:
+                pathColor = new Color32(255, 200, 200, 255);    // red
+                break;  
+            case 2:
+                pathColor = new Color32(200, 255, 200, 255);    // green
+                break;
+            case 3:
+                pathColor = new Color32(200, 200, 255, 255);    // blue
+                break;
+            case 4:
+                pathColor = new Color32(255, 255, 200, 255);    // yellow
+                break;
+            case 5:
+                pathColor = new Color32(255, 200, 255, 255);    // magenta
+                break;
+            case 6:
+                pathColor = new Color32 (200, 255, 255, 255);   // cyan
+                break;
+        }
     }
 
 

@@ -11,6 +11,11 @@ public class ButtonManager : MonoBehaviour
     public Canvas leftCanvas;
     public Canvas rightCanvas;
 
+    [Header("Actions")]
+    public MazeManager mazeManager;
+    public GameObject drawableController;
+    public LineDrawer lineDrawer;
+    
 
 
     // Start is called before the first frame update
@@ -19,7 +24,10 @@ public class ButtonManager : MonoBehaviour
         rightCanvas.GetComponent<CanvasGroup>().alpha = 0;
         rightCanvas.GetComponent<CanvasGroup>().interactable = false;
         rightCanvas.GetComponent<CanvasGroup>().blocksRaycasts = false;
+        drawableController.SetActive(false);
     }
+
+
 
     // Swaps the active canvas upon a button press
     public void Swap()
@@ -32,6 +40,9 @@ public class ButtonManager : MonoBehaviour
             rightCanvas.GetComponent<CanvasGroup>().alpha = 1;
             rightCanvas.GetComponent<CanvasGroup>().interactable = true;
             rightCanvas.GetComponent<CanvasGroup>().blocksRaycasts = true;
+
+            mazeManager.CleanupMaze();
+            drawableController.SetActive(true);
         } 
         else if (leftCanvas.GetComponent<CanvasGroup>().interactable == false)
         {
@@ -42,6 +53,10 @@ public class ButtonManager : MonoBehaviour
             leftCanvas.GetComponent<CanvasGroup>().alpha = 1;
             leftCanvas.GetComponent<CanvasGroup>().interactable = true;
             leftCanvas.GetComponent<CanvasGroup>().blocksRaycasts = true;
+
+            lineDrawer.ClearAllLines();
+        
+            drawableController.SetActive(false);
         }
     }
 }
