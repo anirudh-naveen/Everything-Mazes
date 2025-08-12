@@ -42,6 +42,8 @@ public class ButtonManager : MonoBehaviour
             rightCanvas.GetComponent<CanvasGroup>().blocksRaycasts = true;
 
             mazeManager.CleanupMaze();
+            lineDrawer.ClearAllLines();
+            
             drawableController.SetActive(true);
         } 
         else if (leftCanvas.GetComponent<CanvasGroup>().interactable == false)
@@ -54,6 +56,7 @@ public class ButtonManager : MonoBehaviour
             leftCanvas.GetComponent<CanvasGroup>().interactable = true;
             leftCanvas.GetComponent<CanvasGroup>().blocksRaycasts = true;
 
+            mazeManager.CleanupMaze();
             lineDrawer.ClearAllLines();
         
             drawableController.SetActive(false);

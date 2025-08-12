@@ -13,7 +13,7 @@ public class LineDrawer : MonoBehaviour
     public TMP_Dropdown ddMaze;
     public TMP_Dropdown ddPath;
  
-    private Color32 brushColor;
+    private Color32 selectedColor;
     private Color32 mazeColor;
     private Color32 pathColor;
 
@@ -124,14 +124,10 @@ public class LineDrawer : MonoBehaviour
         currentLineRenderer = strokeObject.AddComponent<LineRenderer>();
         currentEdgeCollider = strokeObject.AddComponent<EdgeCollider2D>();
         
-        // Set initial line width
+        // Set initial line details
         float lineWidth = brushSize.value;
         currentLineRenderer.startWidth = lineWidth;
         currentLineRenderer.endWidth = lineWidth;
-        
-        // Set default material/color properties if needed
-        // currentLineRenderer.material = yourMaterial;
-        // currentLineRenderer.color = yourColor;
         
         // Add to tracking lists
         lineRenderers.Add(currentLineRenderer);

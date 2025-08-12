@@ -19,4 +19,9 @@ public class ScenesChanger : MonoBehaviour
     {
         SceneManager.LoadScene("StartScene");
     }
+
+    public void LoadMazeRushScene()
+    {
+        SceneManager.LoadScene("MazeRushScene");
+    }
 }

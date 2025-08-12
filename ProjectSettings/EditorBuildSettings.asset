@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PlayScene.unity
     guid: 79b6b3569e8a652458b895a299cf484b
+  - enabled: 1
+    path: Assets/Scenes/MazeRushScene.unity
+    guid: 2dd22e6b74159cd4a9515033f9033315
   m_configObjects: {}
