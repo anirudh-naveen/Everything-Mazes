@@ -24,4 +24,14 @@ public class ScenesChanger : MonoBehaviour
     {
         SceneManager.LoadScene("MazeRushScene");
     }
+
+    public void LoadLocalMazeRushScene()
+    {
+        SceneManager.LoadScene("LocalRushScene");
+    }
+
+    public void LoadOnlineMazeRushScene()
+    {
+        SceneManager.LoadScene("OnlineRushScene");
+    }
 }
