@@ -33,17 +33,18 @@ public class MazeManager : MonoBehaviour, IDataPersistence
         sr = gameObject.AddComponent<SpriteRenderer>();
 
         // Set default position of maze
-            Camera cam = Camera.main;
-            if (cam != null)
-            {
-                Vector3 screenPosition = new Vector3(Screen.width / 2f, Screen.height * (2f / 3f), cam.nearClipPlane + 1f);
-                Vector3 worldPosition = cam.ScreenToWorldPoint(screenPosition);
-                worldPosition.z = 0f;
-                transform.position = worldPosition;
-            }
+        Camera cam = Camera.main;
+        if (cam != null)
+        {
+            Vector3 screenPosition = new Vector3(Screen.width / 2f, Screen.height * (2f / 3f), cam.nearClipPlane + 1f);
+            Vector3 worldPosition = cam.ScreenToWorldPoint(screenPosition);
+            worldPosition.z = 0f;
+            transform.position = worldPosition;
+        }
     }
 
-    public void GenerateMaze()
+    // Maze generation method for the creator
+    private void GenerateMaze()
     {
         // Clean up existing maze
         CleanupMaze();
@@ -55,11 +56,11 @@ public class MazeManager : MonoBehaviour, IDataPersistence
         int width = (int)sliderLength.value * 2 + 1;
         int height = (int)sliderHeight.value * 2 + 1;
         int scale = (int)sliderScale.value;
-        
+
         // Initialize textures
         Texture2D tex = null;
         Texture2D scaledTex = null;
-        
+
         try
         {
             tex = new Texture2D(width, height, TextureFormat.RGB24, false);
@@ -99,6 +100,72 @@ public class MazeManager : MonoBehaviour, IDataPersistence
             }
         }
     }
+
+
+
+    // Maze generation method for the maze rush
+    public void GenerateMazeRush()
+    {
+        // Clean up existing maze
+        CleanupMaze();
+
+        // Set basic color choices
+        mazeColor = new Color32(0, 0, 0, 255);
+        pathColor = new Color32(255, 255, 255, 255);
+        endColor = new Color32(255, 200, 200, 255);
+        startColor = new Color32(0, 255, 0, 255);
+
+        // Set basic dimensions
+        int width = 10;
+        int height = 10;
+        int scale = 10;
+
+        // Initialize textures
+        Texture2D tex = null;
+        Texture2D scaledTex = null;
+
+        Debug.Log("1");
+        try
+        {
+            tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+            tex.filterMode = FilterMode.Point;
+
+            // Initialize maze as all walls
+            Color32[] colors = new Color32[width * height];
+            for (int i = 0; i < colors.Length; i++)
+            {
+                colors[i] = mazeColor;
+            }
+            tex.SetPixels32(colors);
+
+            // Generate maze
+            MazeAlgorithm(tex, width, height);
+
+            tex.Apply();
+            scaledTex = ScaleTexture(tex, scale);
+
+            // Update the maze with the completed texture
+            maze = new Maze(scaledTex, mazeColor, pathColor);
+
+            // Generate maze sprite
+            mazeSprite = Sprite.Create(scaledTex,
+                new Rect(0, 0, scaledTex.width, scaledTex.height),
+                new Vector2(0.5f, 0.5f),
+                1f
+            );
+            sr.sprite = mazeSprite;
+        }
+
+        finally
+        {
+            if (tex != null)
+            {
+                DestroyImmediate(tex);
+            }
+        }
+    }
+
+
 
 
     // Uses an iterative stack algorithm to create a maze
@@ -166,11 +233,11 @@ public class MazeManager : MonoBehaviour, IDataPersistence
     {
         int maxAttempts = 1000; // Prevent infinite loops
         int attempts = 0;
-        
+
         while (attempts < maxAttempts)
         {
             attempts++;
-            
+
             Vector2Int end = new Vector2Int(0, 0);
             switch (Random.Range(1, 5))
             {
@@ -197,7 +264,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
                 return;
             }
         }
-        
+
         // FALLBACK 1: Place end at any unvisited position with adjacent path
         for (int x = 1; x < width - 1; x++)
         {
@@ -213,7 +280,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
                 }
             }
         }
-        
+
         // FALLBACK 2: Place end at any unvisited position
         for (int x = 1; x < width - 1; x++)
         {
@@ -266,7 +333,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
 
         return Vector2Int.zero; // Return no unvisited neighbors found
     }
-    
+
 
 
     // Checks if there is no path connecting to a pixel
@@ -302,7 +369,8 @@ public class MazeManager : MonoBehaviour, IDataPersistence
 
 
     // Get color choices
-    private void SetColors() {
+    private void SetColors()
+    {
         switch (ddMaze.value)
         {
             case 0:
@@ -335,7 +403,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
                 break;
             case 1:
                 pathColor = new Color32(255, 200, 200, 255);    // red
-                break;  
+                break;
             case 2:
                 pathColor = new Color32(200, 255, 200, 255);    // green
                 break;
@@ -349,7 +417,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
                 pathColor = new Color32(255, 200, 255, 255);    // magenta
                 break;
             case 6:
-                pathColor = new Color32 (200, 255, 255, 255);   // cyan
+                pathColor = new Color32(200, 255, 255, 255);   // cyan
                 break;
         }
     }
@@ -393,46 +461,46 @@ public class MazeManager : MonoBehaviour, IDataPersistence
 
 
     public void LoadData(GameData data)
-{
-    // Load maze dimensions and scale
-    this.width = data.width;
-    this.height = data.height;
-    this.scale = data.scale;
-    
-    // Update UI sliders to match loaded values
-    if (sliderLength != null)
-        sliderLength.value = (data.width - 1) / 2;
-    if (sliderHeight != null)
-        sliderHeight.value = (data.height - 1) / 2;
-    if (sliderScale != null)
-        sliderScale.value = data.scale;
-    
-    // Load and display the maze if it exists
-    if (data.maze != null)
     {
-        this.maze = data.maze;
-        
-        // Recreate the sprite from loaded maze data
-        Texture2D loadedTexture = maze.ToTexture();
-        if (loadedTexture != null)
+        // Load maze dimensions and scale
+        this.width = data.width;
+        this.height = data.height;
+        this.scale = data.scale;
+
+        // Update UI sliders to match loaded values
+        if (sliderLength != null)
+            sliderLength.value = (data.width - 1) / 2;
+        if (sliderHeight != null)
+            sliderHeight.value = (data.height - 1) / 2;
+        if (sliderScale != null)
+            sliderScale.value = data.scale;
+
+        // Load and display the maze if it exists
+        if (data.maze != null)
         {
+            this.maze = data.maze;
+
+            // Recreate the sprite from loaded maze data
+            Texture2D loadedTexture = maze.ToTexture();
+            if (loadedTexture != null)
+            {
+                CleanupMaze();
+
+                mazeSprite = Sprite.Create(loadedTexture,
+                    new Rect(0, 0, loadedTexture.width, loadedTexture.height),
+                    new Vector2(0.5f, 0.5f),
+                    1f
+                );
+                sr.sprite = mazeSprite;
+
+            }
+        }
+        else
+        {
+            Debug.Log("No maze data found to load.");
             CleanupMaze();
-            
-            mazeSprite = Sprite.Create(loadedTexture,
-                new Rect(0, 0, loadedTexture.width, loadedTexture.height),
-                new Vector2(0.5f, 0.5f),
-                1f
-            );
-            sr.sprite = mazeSprite;
-            
         }
     }
-    else
-    {
-        Debug.Log("No maze data found to load.");
-        CleanupMaze();
-    }
-}
 
 
 
@@ -443,11 +511,12 @@ public class MazeManager : MonoBehaviour, IDataPersistence
         data.width = (int)sliderLength.value * 2 + 1;
         data.height = (int)sliderHeight.value * 2 + 1;
         data.scale = (int)sliderScale.value;
-        
+
         // Save the maze if it exists
         if (maze != null)
         {
-            data.maze = maze;        }
+            data.maze = maze;
+        }
         else
         {
             Debug.Log("No maze was created to save.");
@@ -482,4 +551,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
     {
         CleanupMaze();
     }
+
+
+    public MazeManager() { }
 }
