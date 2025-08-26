@@ -103,33 +103,33 @@ public class MazeManager : MonoBehaviour, IDataPersistence
 
 
 
-    // Maze generation method for the maze rush
-    public void GenerateMazeRush()
+    // Maze sprite generation method for the maze rush
+    public Sprite GenerateMazeRush()
     {
         // Clean up existing maze
         CleanupMaze();
-
+        
         // Set basic color choices
         mazeColor = new Color32(0, 0, 0, 255);
         pathColor = new Color32(255, 255, 255, 255);
         endColor = new Color32(255, 200, 200, 255);
         startColor = new Color32(0, 255, 0, 255);
-
+        
         // Set basic dimensions
-        int width = 10;
+        int width = 20;
         int height = 10;
         int scale = 10;
-
+        
         // Initialize textures
         Texture2D tex = null;
         Texture2D scaledTex = null;
-
-        Debug.Log("1");
+        Sprite generatedSprite = null;
+        
         try
         {
             tex = new Texture2D(width, height, TextureFormat.RGB24, false);
             tex.filterMode = FilterMode.Point;
-
+            
             // Initialize maze as all walls
             Color32[] colors = new Color32[width * height];
             for (int i = 0; i < colors.Length; i++)
@@ -137,25 +137,34 @@ public class MazeManager : MonoBehaviour, IDataPersistence
                 colors[i] = mazeColor;
             }
             tex.SetPixels32(colors);
-
+            
             // Generate maze
             MazeAlgorithm(tex, width, height);
-
             tex.Apply();
+            
             scaledTex = ScaleTexture(tex, scale);
-
+            
             // Update the maze with the completed texture
             maze = new Maze(scaledTex, mazeColor, pathColor);
-
+            
             // Generate maze sprite
-            mazeSprite = Sprite.Create(scaledTex,
+            generatedSprite = Sprite.Create(scaledTex,
                 new Rect(0, 0, scaledTex.width, scaledTex.height),
                 new Vector2(0.5f, 0.5f),
                 1f
             );
-            sr.sprite = mazeSprite;
+            
+            // Store the sprite locally if needed
+            mazeSprite = generatedSprite;
+            
+            // Update local sprite renderer if it exists
+            if (sr != null)
+            {
+                sr.sprite = mazeSprite;
+            }
+            
+            return generatedSprite;
         }
-
         finally
         {
             if (tex != null)
