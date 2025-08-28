@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LocalRushManager : MonoBehaviour
+public class LocalDuelManager : MonoBehaviour
 {
     [Header("UI Items")]
     public Canvas canvas;

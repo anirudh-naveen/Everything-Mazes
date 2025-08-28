@@ -15,12 +15,12 @@ EditorBuildSettings:
     path: Assets/Scenes/PlayScene.unity
     guid: 79b6b3569e8a652458b895a299cf484b
   - enabled: 1
-    path: Assets/Scenes/MazeRushScene.unity
+    path: Assets/Scenes/MazeDuelScene.unity
     guid: 2dd22e6b74159cd4a9515033f9033315
   - enabled: 1
-    path: Assets/Scenes/LocalRushScene.unity
+    path: Assets/Scenes/LocalDuelScene.unity
     guid: 39ff2cbd8a9274691aaf0284c9d396de
   - enabled: 1
-    path: Assets/Scenes/OnlineRushScene.unity
+    path: Assets/Scenes/OnlineDuelScene.unity
     guid: 2b383f887b1b349f8b46d613fe2e651e
   m_configObjects: {}
