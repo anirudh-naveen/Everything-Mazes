@@ -112,12 +112,12 @@ public class MazeManager : MonoBehaviour, IDataPersistence
         // Set basic color choices
         mazeColor = new Color32(0, 0, 0, 255);
         pathColor = new Color32(255, 255, 255, 255);
-        endColor = new Color32(255, 200, 200, 255);
+        endColor = new Color32(255, 0, 0, 255);
         startColor = new Color32(0, 255, 0, 255);
         
         // Set basic dimensions
-        int width = 20;
-        int height = 10;
+        int width = 30;
+        int height = 20;
         int scale = 10;
         
         // Initialize textures
@@ -190,7 +190,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
             Vector2Int current = stack.Peek();
             Vector2Int next = GetRandomUnvisitedNeighbor(current, visited, width, height);
 
-            if (next != Vector2Int.zero) // Found unvisited neighbor
+            if (next != Vector2Int.zero)
             {
                 // Remove wall between current and next
                 Vector2Int wall = current + (next - current) / 2;
@@ -202,7 +202,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
             }
             else
             {
-                stack.Pop(); // Backtrack through stack
+                stack.Pop(); 
             }
         }
 
@@ -240,7 +240,7 @@ public class MazeManager : MonoBehaviour, IDataPersistence
     // Generates ending position of the maze
     private void GenEndPixel(bool[,] visited, Stack<Vector2Int> stack, Texture2D tex, int width, int height)
     {
-        int maxAttempts = 1000; // Prevent infinite loops
+        int maxAttempts = 1000;
         int attempts = 0;
 
         while (attempts < maxAttempts)
