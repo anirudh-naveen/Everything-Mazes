@@ -106,9 +106,6 @@ public class MazeManager : MonoBehaviour, IDataPersistence
     // Maze sprite generation method for the maze rush
     public Sprite GenerateMazeRush()
     {
-        // Clean up existing maze
-        CleanupMaze();
-        
         // Set basic color choices
         mazeColor = new Color32(0, 0, 0, 255);
         pathColor = new Color32(255, 255, 255, 255);

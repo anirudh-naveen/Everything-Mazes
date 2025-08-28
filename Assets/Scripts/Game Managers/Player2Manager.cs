@@ -9,6 +9,9 @@ public class Player2Manager : MonoBehaviour
     
     [Header("Camera Reference")]
     public Camera sceneCamera;
+
+    [Header("Player Manager")]
+    public Player1Manager player1;
     
     private SpriteRenderer sr;
     
@@ -38,15 +41,17 @@ public class Player2Manager : MonoBehaviour
     public void GenerateMaze()
     {        
         // Generate the maze and get the sprite
-        Sprite mazeSprite = mazeManager.GenerateMazeRush();
+        Sprite mazeSprite = player1.mazeSprite;
         
         // Display the maze sprite
+        
         sr.sprite = mazeSprite;
         
-        // Make sure SpriteRenderer is enabled and visible
+        // Make sure SpriteRenderer is enabled, visible, and oriented correctly
         sr.enabled = true;
         sr.sortingOrder = 10; 
         sr.color = Color.white;
+        sr.flipX = true;
         
         // Set the position of the mazes
         PositionMaze();

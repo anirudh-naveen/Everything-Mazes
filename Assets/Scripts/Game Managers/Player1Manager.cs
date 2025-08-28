@@ -9,7 +9,8 @@ public class Player1Manager : MonoBehaviour
     
     [Header("Camera Reference")]
     public Camera sceneCamera; 
-    
+
+    public Sprite mazeSprite;
     private SpriteRenderer sr;
     
     // Start is called before the first frame update
@@ -38,7 +39,7 @@ public class Player1Manager : MonoBehaviour
     public void GenerateMaze()
     {        
         // Generate the maze and get the sprite
-        Sprite mazeSprite = mazeManager.GenerateMazeRush();
+        mazeSprite = mazeManager.GenerateMazeRush();
         
         // Display the maze sprite
         sr.sprite = mazeSprite;
