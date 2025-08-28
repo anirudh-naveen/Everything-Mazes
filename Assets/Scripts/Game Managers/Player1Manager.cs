@@ -17,7 +17,10 @@ public class Player1Manager : MonoBehaviour
     {
         // Get or add SpriteRenderer component once
         sr = GetComponent<SpriteRenderer>();
-        sr ??= gameObject.AddComponent<SpriteRenderer>();
+        if (sr == null)
+        {
+            sr = gameObject.AddComponent<SpriteRenderer>();
+        }
         
         // Verify mazeManager is assigned
         if (mazeManager == null)
