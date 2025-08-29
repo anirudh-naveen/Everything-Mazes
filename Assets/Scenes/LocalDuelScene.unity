@@ -5182,6 +5182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mazeManager: {fileID: 47370989}
   sceneCamera: {fileID: 1704721426}
+  mazeSprite: {fileID: 0}
 --- !u!1 &1505292972
 GameObject:
   m_ObjectHideFlags: 0
@@ -6091,6 +6092,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mazeManager: {fileID: 47370989}
   sceneCamera: {fileID: 1704721426}
+  player1: {fileID: 1480524655}
 --- !u!4 &1786375879
 Transform:
   m_ObjectHideFlags: 0
