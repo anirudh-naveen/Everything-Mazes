@@ -88,6 +88,5 @@ public class Player1Manager : MonoBehaviour
         // Position maze at center of camera view
         Vector3 cameraPos = cam.transform.position;
         transform.position = new Vector3(cameraPos.x - 0.3f, cameraPos.y, cameraPos.z + 1f);
-
     }
 }

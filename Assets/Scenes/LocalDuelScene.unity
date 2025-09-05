@@ -389,6 +389,8 @@ MonoBehaviour:
   sliderScale: {fileID: 367514221}
   ddMaze: {fileID: 2061957174}
   ddPath: {fileID: 772384135}
+  start: {x: 0, y: 0}
+  end: {x: 0, y: 0}
 --- !u!4 &47370990
 Transform:
   m_ObjectHideFlags: 0
@@ -3703,7 +3705,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 885121302}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3753,7 +3755,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09aa27b3dfd14304bee689af516cab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 0
+  speed: 10
+  rb: {fileID: 0}
+  movement: {x: 0, y: 0}
 --- !u!114 &885121306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5031,7 +5035,7 @@ GameObject:
   - component: {fileID: 1374413611}
   - component: {fileID: 1374413615}
   - component: {fileID: 1374413614}
-  - component: {fileID: 1374413613}
+  - component: {fileID: 1374413616}
   - component: {fileID: 1374413612}
   m_Layer: 5
   m_Name: Player 2
@@ -5048,7 +5052,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1374413610}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5086,19 +5090,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &1374413613
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1374413610}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f09aa27b3dfd14304bee689af516cab2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movementSpeed: 0
 --- !u!114 &1374413614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5137,6 +5128,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1374413610}
   m_CullTransparentMesh: 1
+--- !u!114 &1374413616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1374413610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caa4e0ecad36b40158f4b6d82f4d51e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 10
+  rb: {fileID: 0}
+  movement: {x: 0, y: 0}
 --- !u!1 &1397877969
 GameObject:
   m_ObjectHideFlags: 0

@@ -17,6 +17,9 @@ public class MazeManager : MonoBehaviour, IDataPersistence
 
     private Maze maze;
     private Sprite mazeSprite;
+
+    public Vector2Int start;
+    public Vector2Int end;
     private SpriteRenderer sr;
 
     private Color32 mazeColor;
